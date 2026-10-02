@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Comanda Colarinho Tijuca</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Extra+Condensed:wght@600;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#2C3080; --navy-ink:#1E2160; --gold:#E9A23B; --gold-deep:#C9831F;
+  --paper:#EEF0F5; --card:#FFFFFF; --ink:#22264F; --muted:#666B8C; --line:#D5D8E6; --grid:rgba(44,48,128,.14);
+  --bg:#E4E7F0;
+  --display:'Saira Extra Condensed','Arial Narrow',Impact,sans-serif;
+  --body:'Barlow',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#1A1C38; --card:#23264A; --ink:#ECEEFA; --muted:#A3A7C8; --line:#363A66; --grid:rgba(233,162,59,.12);
+    --bg:#121429; --navy:#3C41A8; --navy-ink:#ECEEFA;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#1A1C38; --card:#23264A; --ink:#ECEEFA; --muted:#A3A7C8; --line:#363A66; --grid:rgba(233,162,59,.12);
+  --bg:#121429; --navy:#3C41A8; --navy-ink:#ECEEFA;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.4;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.wrap{max-width:640px;margin:0 auto;background:var(--paper);min-height:100vh;padding-bottom:110px}
+
+/* Header with menu grid motif */
+header{
+  position:relative;padding:28px 20px 22px;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:22px 22px;border-bottom:2px solid var(--navy);
+}
+.brand{font-family:var(--display);font-weight:800;color:var(--gold);font-size:clamp(52px,16vw,78px);line-height:.85;margin:0;
+  text-shadow:3px 3px 0 var(--navy);letter-spacing:.5px}
+.sub{margin:8px 0 0;color:var(--muted);font-weight:500}
+
+/* Search + categories */
+.tools{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:1px solid var(--line);padding:12px 0 10px}
+.search{margin:0 16px 10px;display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:0 12px}
+.search input{flex:1;border:0;background:transparent;color:var(--ink);font:inherit;padding:11px 0;outline:none}
+.search svg{flex:none;opacity:.6}
+.qclear{border:0;background:var(--line);width:26px;height:26px;border-radius:50%;font-size:18px;line-height:1;display:grid;place-items:center}
+.qclear[hidden]{display:none}
+.cats{display:flex;gap:8px;overflow-x:auto;padding:0 16px;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1.5px solid var(--navy);background:transparent;color:var(--ink);border-radius:999px;padding:6px 14px;font-weight:600;font-size:14px;white-space:nowrap}
+.chip.on{background:var(--navy);color:#fff}
+
+/* Menu */
+section.cat{padding:22px 16px 4px}
+section.cat h2{font-family:var(--display);font-weight:800;font-size:32px;line-height:1;margin:0 0 2px;color:var(--navy-ink)}
+section.cat .note{margin:0 0 8px;color:var(--muted);font-size:14px}
+.item{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px dashed var(--line)}
+.item:last-child{border-bottom:0}
+.info{flex:1;min-width:0}
+.name{font-weight:700}
+.desc{color:var(--muted);font-size:13.5px;margin-top:2px}
+.price{font-weight:600;color:var(--navy-ink);margin-top:3px;font-variant-numeric:tabular-nums}
+.stepper{flex:none;display:flex;align-items:center;gap:2px}
+.stepper button{width:38px;height:38px;border-radius:50%;border:0;display:grid;place-items:center;font-size:22px;font-weight:700;line-height:1}
+.btn-add{background:var(--gold);color:#1E2160}
+.btn-add:active{background:var(--gold-deep)}
+.btn-sub{background:transparent;border:1.5px solid var(--line)!important;color:var(--ink)}
+.qty{min-width:28px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums;font-size:17px}
+.item.has .name::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--gold);margin-right:7px;vertical-align:middle;transform:translateY(-1px)}
+.empty-search{padding:40px 20px;text-align:center;color:var(--muted)}
+
+/* Bottom bar */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:10;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));pointer-events:none}
+.bar-inner{max-width:616px;margin:0 auto;pointer-events:auto;display:flex;align-items:center;gap:12px;background:var(--navy);color:#fff;border-radius:14px;padding:10px 10px 10px 16px;box-shadow:0 8px 24px rgba(20,22,70,.35)}
+.bar-total{flex:1}
+.bar-total small{display:block;opacity:.75;font-size:13px}
+.bar-total strong{font-family:var(--display);font-weight:800;font-size:28px;line-height:1;font-variant-numeric:tabular-nums}
+.bar-inner button{background:var(--gold);color:#1E2160;border:0;border-radius:10px;padding:12px 16px;font-weight:700}
+.bar-inner button:disabled{opacity:.5;cursor:default}
+
+/* Comanda sheet */
+.overlay{position:fixed;inset:0;background:rgba(14,16,45,.55);z-index:20;display:none}
+.overlay.open{display:block}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:21;max-width:640px;margin:0 auto;max-height:92%;display:flex;flex-direction:column;
+  background:var(--card);border-radius:18px 18px 0 0;transform:translateY(105%);transition:transform .28s ease;padding-bottom:env(safe-area-inset-bottom,0px)}
+.sheet.open{transform:none}
+@media (prefers-reduced-motion:reduce){.sheet{transition:none}}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 10px;border-bottom:2px solid var(--navy)}
+.sheet-head h3{margin:0;font-family:var(--display);font-weight:800;font-size:34px;line-height:1;color:var(--navy-ink)}
+.close{border:0;background:transparent;font-size:28px;width:40px;height:40px;border-radius:50%}
+.sheet-body{overflow-y:auto;padding:4px 18px 18px}
+.thead,.row{display:grid;grid-template-columns:1fr auto 84px;gap:10px;align-items:center}
+.thead{font-size:13px;color:var(--muted);font-weight:600;padding:10px 0 6px;border-bottom:1px solid var(--line)}
+.thead span:nth-child(3){text-align:right}
+.row{padding:10px 0;border-bottom:1px dashed var(--line)}
+.row .rname{font-weight:700}
+.row .unit{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.row .sub{text-align:right;font-weight:700;font-variant-numeric:tabular-nums;margin:0;color:var(--ink)}
+.row .stepper button{width:32px;height:32px;font-size:19px}
+.row .qty{min-width:24px}
+.sums{margin-top:14px;border-top:2px solid var(--navy);padding-top:10px}
+.line{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-variant-numeric:tabular-nums}
+.line.muted{color:var(--muted)}
+.toggle{display:flex;align-items:center;gap:10px;cursor:pointer}
+.toggle input{width:20px;height:20px;accent-color:var(--navy)}
+.grand{display:flex;justify-content:space-between;align-items:baseline;padding:12px 0 4px}
+.grand span{font-family:var(--display);font-weight:800;font-size:26px}
+.grand strong{font-family:var(--display);font-weight:800;font-size:42px;color:var(--navy-ink);font-variant-numeric:tabular-nums}
+.split{display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding:12px 14px;border-radius:12px;background:var(--paper)}
+.split .per{font-weight:700;font-variant-numeric:tabular-nums}
+.clear{width:100%;margin-top:16px;padding:12px;border-radius:10px;background:transparent;border:1.5px solid #C2413A;color:#C2413A;font-weight:700}
+.calc-open{position:absolute;top:18px;right:16px;background:var(--card);border:1.5px solid var(--navy);color:var(--ink);border-radius:999px;padding:8px 14px;font-weight:700;font-size:14px}
+.field{display:block;margin:16px 0 6px;font-weight:600}
+.money{display:flex;align-items:center;gap:8px;border:2px solid var(--navy);border-radius:12px;padding:0 14px;background:var(--paper)}
+.money span{font-family:var(--display);font-weight:800;font-size:28px;color:var(--muted)}
+.money input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font-family:var(--display);font-weight:800;font-size:40px;padding:6px 0;outline:none;font-variant-numeric:tabular-nums}
+.linkbtn{background:transparent;border:0;color:var(--navy-ink);text-decoration:underline;font-weight:600;padding:6px 0}
+.result{margin-top:16px;padding:18px;border-radius:14px;background:var(--navy);color:#fff;text-align:center}
+.result small{display:block;opacity:.8}
+.result strong{display:block;font-family:var(--display);font-weight:800;font-size:56px;line-height:1.05;font-variant-numeric:tabular-nums;color:var(--gold)}
+.result p{margin:6px 0 0;font-size:14px;opacity:.9}
+.empty{padding:36px 10px;text-align:center;color:var(--muted)}
+.hint{font-size:12.5px;color:var(--muted);margin-top:14px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <button class="calc-open" id="calcOpen">Dividir conta</button>
+    <h1 class="brand">Colarinho</h1>
+    <p class="sub">Comanda da mesa. Toque no + para adicionar o que pediu.</p>
+  </header>
+
+  <div class="tools">
+    <label class="search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="text" inputmode="search" placeholder="Buscar: cerveja, brahma, pastel..." aria-label="Buscar no cardápio" autocomplete="off">
+      <button type="button" id="qClear" class="qclear" aria-label="Limpar busca" hidden>×</button>
+    </label>
+    <nav class="cats" id="cats" aria-label="Categorias"></nav>
+  </div>
+
+  <main id="menu"></main>
+</div>
+
+<div class="bar">
+  <div class="bar-inner">
+    <div class="bar-total"><small id="barCount">Nenhum item</small><strong id="barTotal">R$ 0,00</strong></div>
+    <button id="openBtn" disabled>Ver comanda</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+<aside class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="sheet-head">
+    <h3 id="sheetTitle">Sua comanda</h3>
+    <button class="close" id="closeBtn" aria-label="Fechar comanda">×</button>
+  </div>
+  <div class="sheet-body" id="sheetBody"></div>
+</aside>
+
+<aside class="sheet" id="calcSheet" role="dialog" aria-modal="true" aria-labelledby="calcTitle">
+  <div class="sheet-head">
+    <h3 id="calcTitle">Dividir conta</h3>
+    <button class="close" id="calcClose" aria-label="Fechar calculadora">×</button>
+  </div>
+  <div class="sheet-body">
+    <label class="field" for="calcVal">Valor da conta</label>
+    <div class="money"><span>R$</span><input id="calcVal" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off"></div>
+    <button class="linkbtn" id="calcUse" hidden>Usar o total da comanda</button>
+
+    <div class="split" style="margin-top:14px">
+      <div style="font-weight:600">Pessoas</div>
+      <div class="stepper"><button class="btn-sub" id="cMinus" aria-label="Menos pessoas">−</button><span class="qty" id="cPeople">2</span><button class="btn-add" id="cPlus" aria-label="Mais pessoas">+</button></div>
+    </div>
+    <div class="line muted" style="margin-top:8px"><label class="toggle"><input type="checkbox" id="cSvc"> Somar 10% de serviço</label><span id="cSvcVal">R$ 0,00</span></div>
+
+    <div class="result" aria-live="polite">
+      <small>Cada pessoa paga</small>
+      <strong id="cPer">R$ 0,00</strong>
+      <p id="cNote">Digite o valor da conta.</p>
+    </div>
+  </div>
+</aside>
+
+<script>
+const MENU = [
+  {cat:"Aquecimento", items:[
+    ["Pão de alho",19.90,"Recheado com queijo e farofa de bacon"],
+    ["Couvert",49.90,"Azeitonas, ovos de codorna, linguicinha, patê, batatinhas e pão"]]},
+  {cat:"Resenha de vestiário", items:[
+    ["Parmegiana",69.90,"Lascas de carne no panko com molho e três queijos"],
+    ["Pipoca de frango",54.90,"Cubos empanados no parmesão com molho ranch"],
+    ["Torresmo",45.90,"Barriga de porco pururuca com sweet chilli"],
+    ["Haja coração",45.90,"Coração de frango com parmesão e limão"],
+    ["Batatas picantes",29.90,"Batatas bolinha marinadas no mix de pimentas"],
+    ["Fritas",29.90,"Onduladas com páprica, ranch e ketchup de goiaba"],
+    ["Aipimzin",32.90,"Com parmesão e manteiga de garrafa"]]},
+  {cat:"Bolinhos", note:"Porções com 3 unidades", items:[
+    ["Bom-bom de camarão",39.90,"Camarão com catupiry no panko"],
+    ["Bolinho de rabada",29.90,"Com mostarda e mel"],
+    ["Bacalhau catupiry",39.90,""],
+    ["Bolinho de feijoada",29.90,"Com sweet chilli"]]},
+  {cat:"Caldos", items:[
+    ["Caldo clássico de feijão",14.90,"Com farofa de bacon e vinagrete picante"]]},
+  {cat:"Pastéis salgados", items:[
+    ["Pastel de carne",14.90,""],["Pastel de queijo",12.90,""],["Pastel de rabada",14.90,""],
+    ["Pastel de camarão",16.90,""],["Pastel Chique",16.90,"Camarão com alho poró e cream cheese"],
+    ["Pastel frango caipira",14.90,""],["Pastel de palmito",16.90,""],
+    ["Pastel Nordestino",14.90,"Carne seca, feijão de corda e coalho"],
+    ["Pastel Portuga",16.90,"Bacalhau desfiado"],["Pastel queijo e cebola",12.90,""],
+    ["Pastel Calabreso",14.90,"Calabresa acebolada com catupiry"]]},
+  {cat:"Pastéis doces", items:[
+    ["Namorados",16.90,"Ganache de chocolate com morangos"],
+    ["Loucos por Nutella",18.90,""],
+    ["Banana Nevada",16.90,"Banana caramelada, doce de leite e chocolate branco"]]},
+  {cat:"Sanduíches", note:"Acompanham fritas", items:[
+    ["Melt",39.90,"Carne com muito queijo derretido"],
+    ["Colarinho Football Burger",49.90,"Cheddar, cebola caramelada e ranch"],
+    ["Pão com linguiça",29.90,"Linguiça de pernil, mostarda e ketchup de goiaba"]]},
+  {cat:"Pratos", items:[
+    ["Feijoada de joelho",129.90,"Com couve, ovo frito e torresmo"],
+    ["Picanha de braseiro",219.90,"Arroz de brócolis, farofa de ovo e fritas"],
+    ["Espetada",189.90,"Contra filé com bacon, arroz e ovos fritos"],
+    ["Milanesa",159.90,"Frango com catupiry, arroz de brócolis e fritas"]]},
+  {cat:"Saladas", items:[
+    ["Salada clássica",29.90,""],["Salada de batatas",32.90,""]]},
+  {cat:"Kids", items:[
+    ["Bifinhos",29.90,"Arroz, feijão e batatinhas"],
+    ["Franguitos",29.90,"Arroz, feijão e purê"],
+    ["Macarrão",29.90,"Espaguete com almôndegas"]]},
+  {cat:"Sobremesas e café", items:[
+    ["Pudim no copo",22.90,"O copo é seu"],
+    ["Casadinho com sorvete",29.90,""],
+    ["Café expresso",8.90,""]]},
+  {cat:"Cervejas", note:"Chopp Brahma e long necks", items:[
+    ["Chopp Brahma Caldereta",8.90,""],["Chopp Brahma Zero Grau",10.90,""],
+    ["Heineken",14.90],["Heineken Zero",14.90],["Amstel",11.90],["Praya",13.90],
+    ["Blue Moon",19.90],["Lagunitas",19.90],["Stella",12.90],["Stella Pure Gold",12.90],
+    ["Corona",13.90],["Corona Zero",13.90]]},
+  {cat:"Sem álcool", items:[
+    ["Água sem gás",7.90],["Água com gás",7.90],["H2OH! Limoneto",9.90],["Refrigerante",8.90],
+    ["Suco natural",11.90,"Laranja, limão ou abacaxi"],
+    ["Mate natural da casa",11.90],["Mate com limão",11.90],["Mate com maracujá",11.90],
+    ["Red Bull Tradicional",18.90],["Red Bull Zero",18.90],["Red Bull Tropical",18.90],["Red Bull Frutas Vermelhas",18.90]]},
+  {cat:"Doses", items:[
+    ["Batida da casa",6.90],["Jack Daniel's",26.00],["Black Label",29.90],["Licor 43",23.90],["Honey",26.00]]},
+  {cat:"Drinks", items:[
+    ["Gin tradicional",20.90],["Gin Tropical",29.90],["Gin Frutas Vermelhas",29.90],
+    ["Caipirinha tradicional",18.90],["Caipivodka",21.90,"Tradicional ou sabores"],
+    ["Negroni",28.90],["Mojito",26.90],["Penicillin",35.90],["Aperol Spritz",32.90],
+    ["Fitzgerald",35.90],["Carajillo",29.90],["Apple Martini",26.90],["Cosmopolitan",27.90],
+    ["Margarita",26.90],["Moscow Mule",29.90]]}
+];
+
+// Search keywords per category, so "cerveja", "bebida", "comida" etc. find items
+const TAGS = {
+  "Aquecimento":"petisco entrada comida", "Resenha de vestiário":"petisco porcao comida",
+  "Bolinhos":"petisco porcao comida bolinho", "Caldos":"comida sopa",
+  "Pastéis salgados":"pastel comida", "Pastéis doces":"pastel doce sobremesa",
+  "Sanduíches":"lanche hamburguer burger sanduiche comida", "Pratos":"prato almoco jantar comida",
+  "Saladas":"comida salada", "Kids":"crianca infantil comida", "Sobremesas e café":"doce sobremesa cafe",
+  "Cervejas":"cerveja breja bebida alcool chopp chope long neck", "Sem álcool":"bebida sem alcool refri energetico",
+  "Doses":"dose destilado bebida alcool whisky uisque", "Drinks":"drink bebida coquetel alcool"
+};
+const norm = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+
+// Build flat index with stable ids (keyed by name so saved orders survive menu edits)
+const ITEMS = {};
+const CAT_IDS = MENU.map(c=>c.items.map(it=>{
+  const id = norm(it[0]).replace(/[^a-z0-9]+/g,"-");
+  ITEMS[id] = {id, cat:c.cat, name:it[0], price:it[1], desc:it[2]||"",
+    search: norm(it[0]+" "+(it[2]||"")+" "+c.cat+" "+(TAGS[c.cat]||""))};
+  return id;
+}));
+
+const KEY = "comanda-colarinho-v2";
+const COVER = 10;
+let state = {qty:{}, order:[], service:true, cover:true, people:1};
+try{
+  const s = JSON.parse(localStorage.getItem(KEY));
+  if(s && s.qty){
+    state = Object.assign(state,s);
+    for(const id in state.qty) if(!ITEMS[id]) delete state.qty[id];
+    state.order = (state.order||[]).filter(id=>state.qty[id]);
+  }
+}catch(e){}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+
+const fmt = v => v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const slug = s => "c-"+s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-");
+
+const menuEl = document.getElementById("menu");
+const catsEl = document.getElementById("cats");
+
+function stepperHTML(id){
+  const q = state.qty[id]||0;
+  if(!q) return `<div class="stepper"><button class="btn-add" data-add="${id}" aria-label="Adicionar ${ITEMS[id].name}">+</button></div>`;
+  return `<div class="stepper">
+    <button class="btn-sub" data-sub="${id}" aria-label="Remover um ${ITEMS[id].name}">−</button>
+    <span class="qty" aria-live="polite">${q}</span>
+    <button class="btn-add" data-add="${id}" aria-label="Adicionar ${ITEMS[id].name}">+</button></div>`;
+}
+
+function renderMenu(filter=""){
+  const words = norm(filter.trim()).split(/\s+/).filter(Boolean);
+  let html = "", any = false;
+  MENU.forEach((c,ci)=>{
+    const rows = CAT_IDS[ci].map(id=>ITEMS[id]).filter(it=>words.every(w=>it.search.includes(w)));
+    if(!rows.length) return;
+    any = true;
+    html += `<section class="cat" id="${slug(c.cat)}"><h2>${c.cat}</h2>${c.note?`<p class="note">${c.note}</p>`:""}`;
+    rows.forEach(it=>{
+      html += `<div class="item${state.qty[it.id]?" has":""}" id="it-${it.id}">
+        <div class="info"><div class="name">${it.name}</div>${it.desc?`<div class="desc">${it.desc}</div>`:""}<div class="price">${fmt(it.price)}</div></div>
+        ${stepperHTML(it.id)}</div>`;
+    });
+    html += `</section>`;
+  });
+  menuEl.innerHTML = any ? html : `<p class="empty-search">Nada encontrado com “${filter}”. Tente outro nome.</p>`;
+}
+
+function renderCats(){
+  catsEl.innerHTML = MENU.map(c=>`<button class="chip" data-cat="${slug(c.cat)}">${c.cat}</button>`).join("");
+}
+
+function updateItem(id){
+  const el = document.getElementById("it-"+id);
+  if(!el) return;
+  el.classList.toggle("has", !!state.qty[id]);
+  el.querySelector(".stepper").outerHTML = stepperHTML(id);
+}
+
+function totals(){
+  let sub=0, count=0;
+  for(const id in state.qty){ sub += ITEMS[id].price*state.qty[id]; count += state.qty[id]; }
+  sub = Math.round(sub*100)/100;
+  const svc = state.service ? Math.round(sub*10)/100 : 0;
+  const cover = (state.cover && count) ? COVER*state.people : 0;
+  return {sub, svc, cover, total: sub+svc+cover, count};
+}
+
+function renderBar(){
+  const t = totals();
+  document.getElementById("barCount").textContent = t.count ? `${t.count} ${t.count===1?"item":"itens"} na comanda` : "Nenhum item";
+  document.getElementById("barTotal").textContent = fmt(t.total);
+  document.getElementById("openBtn").disabled = !t.count;
+}
+
+function change(id, d){
+  const q = (state.qty[id]||0)+d;
+  if(q<=0){ delete state.qty[id]; state.order = state.order.filter(x=>x!==id); }
+  else { state.qty[id]=q; if(!state.order.includes(id)) state.order.push(id); }
+  save(); updateItem(id); renderBar();
+  if(sheet.classList.contains("open")) renderSheet();
+}
+
+/* Sheet */
+const sheet = document.getElementById("sheet"), overlay = document.getElementById("overlay"), body = document.getElementById("sheetBody");
+function renderSheet(){
+  const t = totals();
+  if(!t.count){ body.innerHTML = `<p class="empty">A comanda está vazia. Adicione itens pelo cardápio.</p>`; return; }
+  const ids = state.order.filter(id=>state.qty[id]);
+  let h = `<div class="thead"><span>Item</span><span>Qtd.</span><span>Total</span></div>`;
+  ids.forEach(id=>{
+    const it = ITEMS[id], q = state.qty[id];
+    h += `<div class="row"><div><div class="rname">${it.name}</div><div class="unit">${fmt(it.price)} cada</div></div>
+      ${stepperHTML(id)}<p class="sub">${fmt(it.price*q)}</p></div>`;
+  });
+  const per = state.people>1 ? t.total/state.people : 0;
+  h += `<div class="sums">
+    <div class="line"><span>Subtotal (${t.count} ${t.count===1?"item":"itens"})</span><span>${fmt(t.sub)}</span></div>
+    <div class="line muted"><label class="toggle"><input type="checkbox" id="svc" ${state.service?"checked":""}> Taxa de serviço (10%)</label><span>${fmt(t.svc)}</span></div>
+    <div class="line muted"><label class="toggle"><input type="checkbox" id="cov" ${state.cover?"checked":""}> Couvert artístico (${fmt(COVER)} × ${state.people} ${state.people===1?"pessoa":"pessoas"})</label><span>${fmt(t.cover)}</span></div>
+    <div class="grand"><span>Total</span><strong>${fmt(t.total)}</strong></div>
+    <div class="split"><div><div style="font-weight:600">Pessoas na mesa</div>${per?`<div class="per">${fmt(per)} por pessoa</div>`:`<div class="unit">Conta inteira para uma pessoa</div>`}</div>
+      <div class="stepper"><button class="btn-sub" id="pMinus" aria-label="Menos pessoas">−</button><span class="qty">${state.people}</span><button class="btn-add" id="pPlus" aria-label="Mais pessoas">+</button></div></div>
+    <button class="clear" id="clearBtn">Limpar comanda</button>
+    <p class="hint">Confira com a conta do bar antes de pagar.</p>
+  </div>`;
+  body.innerHTML = h;
+}
+function openSheet(){ renderSheet(); overlay.classList.add("open"); sheet.classList.add("open"); document.getElementById("closeBtn").focus(); }
+function closeSheet(){
+  const wasCalc = calcSheet.classList.contains("open");
+  overlay.classList.remove("open"); sheet.classList.remove("open"); calcSheet.classList.remove("open");
+  document.getElementById(wasCalc ? "calcOpen" : "openBtn").focus();
+}
+
+/* Calculadora de divisão */
+const calcSheet = document.getElementById("calcSheet");
+const cVal = document.getElementById("calcVal");
+let calcPeople = 2;
+function parseBRL(s){
+  s = (s||"").replace(/[R$\s]/g,"");
+  if(s.includes(",")) s = s.replace(/\./g,"").replace(",",".");
+  const v = parseFloat(s);
+  return isFinite(v) && v>0 ? v : 0;
+}
+function renderCalc(){
+  const base = Math.round(parseBRL(cVal.value)*100);
+  const svc = document.getElementById("cSvc").checked ? Math.round(base*0.10) : 0;
+  const total = base + svc, n = calcPeople;
+  document.getElementById("cPeople").textContent = n;
+  document.getElementById("cSvcVal").textContent = fmt(svc/100);
+  const perEl = document.getElementById("cPer"), note = document.getElementById("cNote");
+  if(!total){ perEl.textContent = fmt(0); note.textContent = "Digite o valor da conta."; return; }
+  const per = Math.floor(total/n), rest = total - per*n;
+  perEl.textContent = fmt((rest ? per+1 : per)/100);
+  if(!rest) note.textContent = `Total de ${fmt(total/100)} dividido por ${n}.`;
+  else note.textContent = `Total de ${fmt(total/100)}. Para fechar certinho, ${rest} ${rest===1?"pessoa paga":"pessoas pagam"} ${fmt((per+1)/100)} e ${n-rest} ${n-rest===1?"paga":"pagam"} ${fmt(per/100)}.`;
+}
+function openCalc(){
+  const t = totals();
+  const useBtn = document.getElementById("calcUse");
+  useBtn.hidden = !t.count;
+  useBtn.textContent = `Usar o total da comanda (${fmt(t.total)})`;
+  renderCalc();
+  overlay.classList.add("open"); calcSheet.classList.add("open"); cVal.focus();
+}
+document.getElementById("calcOpen").onclick = openCalc;
+document.getElementById("calcClose").onclick = closeSheet;
+cVal.addEventListener("input", renderCalc);
+document.getElementById("cSvc").addEventListener("change", renderCalc);
+document.getElementById("cPlus").onclick = ()=>{ calcPeople=Math.min(50,calcPeople+1); renderCalc(); };
+document.getElementById("cMinus").onclick = ()=>{ calcPeople=Math.max(1,calcPeople-1); renderCalc(); };
+document.getElementById("calcUse").onclick = ()=>{
+  // Comanda total already includes service and cover, so don't add 10% again
+  const t = totals();
+  cVal.value = t.total.toFixed(2).replace(".",",");
+  document.getElementById("cSvc").checked = false;
+  calcPeople = state.people > 1 ? state.people : calcPeople;
+  renderCalc();
+};
+
+document.addEventListener("click", e=>{
+  const a = e.target.closest("[data-add]"), s = e.target.closest("[data-sub]");
+  if(a) return change(a.dataset.add, 1);
+  if(s) return change(s.dataset.sub, -1);
+  const chip = e.target.closest(".chip");
+  if(chip){ jumpTo(chip.dataset.cat); return; }
+  if(e.target.id==="pPlus"){ state.people=Math.min(30,state.people+1); save(); renderSheet(); renderBar(); }
+  if(e.target.id==="pMinus"){ state.people=Math.max(1,state.people-1); save(); renderSheet(); renderBar(); }
+  if(e.target.id==="qClear"){ const q=document.getElementById("q"); q.value=""; onSearch(); q.focus(); }
+  if(e.target.id==="clearBtn"){
+    if(confirm("Limpar todos os itens da comanda?")){
+      state.qty={}; state.order=[]; state.people=1; save(); renderMenu(document.getElementById("q").value); renderBar(); renderSheet();
+    }
+  }
+});
+document.addEventListener("change", e=>{
+  if(e.target.id==="svc"){ state.service=e.target.checked; save(); renderSheet(); renderBar(); }
+  if(e.target.id==="cov"){ state.cover=e.target.checked; save(); renderSheet(); renderBar(); }
+});
+
+const toolsEl = document.querySelector(".tools");
+const reduce = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+let jumping = false, jumpTimer;
+
+function setActiveChip(catId){
+  document.querySelectorAll(".chip").forEach(c=>c.classList.toggle("on", c.dataset.cat===catId));
+  const on = catsEl.querySelector(".chip.on");
+  if(on) catsEl.scrollTo({left: on.offsetLeft - catsEl.clientWidth/2 + on.offsetWidth/2, behavior: reduce()?"auto":"smooth"});
+}
+
+function jumpTo(catId){
+  // A category can be hidden by an active search, so clear it first
+  const q = document.getElementById("q");
+  if(q.value){ q.value=""; renderMenu(""); observe(); toggleClear(); }
+  const sec = document.getElementById(catId);
+  if(!sec) return;
+  jumping = true; clearTimeout(jumpTimer);
+  setActiveChip(catId);
+  const y = sec.getBoundingClientRect().top + window.scrollY - toolsEl.offsetHeight - 4;
+  window.scrollTo({top:y, behavior: reduce()?"auto":"smooth"});
+  jumpTimer = setTimeout(()=>{ jumping=false; }, 900);
+}
+
+function toggleClear(){ document.getElementById("qClear").hidden = !document.getElementById("q").value; }
+
+function onSearch(){
+  const v = document.getElementById("q").value;
+  renderMenu(v); observe(); toggleClear();
+  // Bring results into view right away, wherever the page was scrolled
+  const top = document.querySelector("header").offsetHeight;
+  if(window.scrollY > top) window.scrollTo({top, behavior:"auto"});
+  if(v) document.querySelectorAll(".chip").forEach(c=>c.classList.remove("on"));
+}
+document.getElementById("openBtn").onclick = openSheet;
+document.getElementById("closeBtn").onclick = closeSheet;
+overlay.onclick = closeSheet;
+document.addEventListener("keydown", e=>{ if(e.key==="Escape" && overlay.classList.contains("open")) closeSheet(); });
+document.getElementById("q").addEventListener("input", onSearch);
+
+// Highlight current category chip while scrolling by hand
+const io = new IntersectionObserver(entries=>{
+  if(jumping || document.getElementById("q").value) return;
+  entries.forEach(en=>{ if(en.isIntersecting) setActiveChip(en.target.id); });
+},{rootMargin:"-30% 0px -65% 0px"});
+function observe(){ io.disconnect(); document.querySelectorAll("section.cat").forEach(s=>io.observe(s)); }
+
+renderCats(); renderMenu(); renderBar(); observe();
+</script>
+</body>
+</html>
